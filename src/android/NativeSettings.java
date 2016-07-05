@@ -11,11 +11,19 @@ package com.phonegap.plugins.nativesettings;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.List;
+
 import android.content.Intent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 
 import android.provider.Settings;
+import android.provider.Settings.Secure;
+
+import android.text.TextUtils;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -31,8 +39,8 @@ public class NativeSettings extends CordovaPlugin {
 
         //Information on settings can be found here:
         //http://developer.android.com/reference/android/provider/Settings.html
-		
-		action = args.getString(0);
+        
+        action = args.getString(0);
 
         if (action.equals("accessibility")) {
             this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS));
@@ -96,7 +104,26 @@ public class NativeSettings extends CordovaPlugin {
             this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
         }
         else if (action.equals("notification_listner")) {
-           this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            PackageManager packageManager = this.cordova.getActivity().getPackageManager();
+            List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+            final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
+            boolean isEnabled = false;
+            String pkgName = this.cordova.getActivity().getPackageName();
+            final String flat = Settings.Secure.getString(this.cordova.getActivity().getContentResolver(), ENABLED_NOTIFICATION_LISTENERS);
+            if (!TextUtils.isEmpty(flat)) {
+                final String[] names = flat.split(":");
+                for (int i = 0; i < names.length; i++) {
+                    final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                    if (cn != null) {
+                        if (TextUtils.equals(pkgName, cn.getPackageName())) {
+                            isEnabled = true;
+                        }
+                    }
+                }
+            }
+            if (list.size() > 0 && !isEnabled) this.cordova.getActivity().startActivity(intent);
         }
         else if (action.equals("print")) {
             this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_PRINT_SETTINGS));
@@ -136,4 +163,3 @@ public class NativeSettings extends CordovaPlugin {
         return true;
     }
 }
-
