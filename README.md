@@ -79,6 +79,7 @@ You can use any constant from the following list:
     "nfcsharing", // android
     "nfc_payment", // android
     "nfc_settings", // android
+    "notification_listner", //android
     "notes", // ios
     "notification_id", // ios
     "passbook", // ios

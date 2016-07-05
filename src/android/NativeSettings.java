@@ -95,9 +95,9 @@ public class NativeSettings extends CordovaPlugin {
         } else if (action.equals("nfc_settings")) {
             this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_NFC_SETTINGS));
         }
-        //else if (action.equals("notification_listner")) {
-        //    this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
-        //}
+        else if (action.equals("notification_listner")) {
+           this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+        }
         else if (action.equals("print")) {
             this.cordova.getActivity().startActivity(new Intent(android.provider.Settings.ACTION_PRINT_SETTINGS));
         } else if (action.equals("privacy")) {
